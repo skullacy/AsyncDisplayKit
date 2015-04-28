@@ -140,7 +140,7 @@
   // Frame is only defined when transform is identity because we explicitly diverge from CALayer behavior and define frame without transform
 #if DEBUG
   // Checking if the transform is identity is expensive, so disable when unnecessary. We have assertions on in Release, so DEBUG is the only way I know of.
-  ASDisplayNodeAssert(CATransform3DIsIdentity(self.transform), @"Must be an identity transform");
+//  ASDisplayNodeAssert(CATransform3DIsIdentity(self.transform), @"Must be an identity transform");
 #endif
 
   if (_layer && ASDisplayNodeThreadIsMain()) {
