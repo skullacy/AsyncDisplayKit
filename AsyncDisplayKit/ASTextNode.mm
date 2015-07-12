@@ -337,8 +337,8 @@ ASDISPLAYNODE_INLINE CGFloat ceilPixelValue(CGFloat f)
   // We need an entirely new renderer
   [self _invalidateRenderer];
 
-  // Tell the display node superclasses that the cached sizes are incorrect now
-  [self invalidateCalculatedSize];
+  // Tell the display node superclasses that the cached layout is incorrect now
+  [self invalidateCalculatedLayout];
 
   [self setNeedsDisplay];
 
@@ -359,7 +359,7 @@ ASDISPLAYNODE_INLINE CGFloat ceilPixelValue(CGFloat f)
   if ((_exclusionPaths == nil && exclusionPaths != nil) || (![_exclusionPaths  isEqualToArray:exclusionPaths])) {
     _exclusionPaths = exclusionPaths;
     [self _invalidateRenderer];
-    [self invalidateCalculatedSize];
+    [self invalidateCalculatedLayout];
     [self setNeedsDisplay];
   }
 }
@@ -768,6 +768,33 @@ ASDISPLAYNODE_INLINE CGFloat ceilPixelValue(CGFloat f)
 }
 
 #pragma mark - Touch Handling
+
+-(BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+  if (!_passthroughNonlinkTouches) {
+    return [super pointInside:point withEvent:event];
+  }
+
+  NSRange range = NSMakeRange(0, 0);
+  NSString *linkAttributeName = nil;
+  BOOL inAdditionalTruncationMessage = NO;
+
+  id linkAttributeValue = [self _linkAttributeValueAtPoint:point
+                                             attributeName:&linkAttributeName
+                                                     range:&range
+                             inAdditionalTruncationMessage:&inAdditionalTruncationMessage];
+
+  NSUInteger lastCharIndex = NSIntegerMax;
+  BOOL linkCrossesVisibleRange = (lastCharIndex > range.location) && (lastCharIndex < NSMaxRange(range) - 1);
+
+  if (inAdditionalTruncationMessage) {
+    return YES;
+  } else if (range.length && !linkCrossesVisibleRange && linkAttributeValue != nil && linkAttributeName != nil) {
+    return YES;
+  } else {
+    return NO;
+  }
+}
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
