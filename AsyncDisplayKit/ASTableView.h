@@ -51,7 +51,14 @@
 - (void)setTuningParameters:(ASRangeTuningParameters)tuningParameters forRangeType:(ASLayoutRangeType)rangeType;
 
 /**
- * initializer.
+ * Initializer.
+ *
+ * @param frame A rectangle specifying the initial location and size of the table view in its superview’s coordinates. 
+ * The frame of the table view changes as table cells are added and deleted.
+ *
+ * @param style A constant that specifies the style of the table view. See UITableViewStyle for descriptions of valid constants.
+ *
+ * @param asyncDataFetchingEnabled Enable the data fetching in async mode.
  * 
  * @discussion If asyncDataFetching is enabled, the `ASTableView` will fetch data through `tableView:numberOfRowsInSection:` and
  * `tableView:nodeForRowAtIndexPath:` in async mode from background thread. Otherwise, the methods will be invoked synchronically 
@@ -69,6 +76,15 @@
  * Defaults to one screenful.
  */
 @property (nonatomic, assign) CGFloat leadingScreensForBatching;
+
+/**
+ * Reload everything from scratch, destroying the working range and all cached nodes.
+ *
+ * @param completion block to run on completion of asynchronous loading or nil. If supplied, the block is run on 
+ * the main thread.
+ * @warning This method is substantially more expensive than UITableView's version.
+ */
+-(void)reloadDataWithCompletion:(void (^)())completion;
 
 /**
  * Reload everything from scratch, destroying the working range and all cached nodes.
